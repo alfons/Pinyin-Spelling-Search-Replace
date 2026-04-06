@@ -1,0 +1,398 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <title>Pīnyīn Spelling Search-Replace</title>
+    <script>
+        // 1. This is the list of search-replace pairs, separated by semicolon 
+        // 2. Items are whitespace sensitive
+        // 3. Automatic initial capital letters search/replace, e.g. "zhīhòu;zhī hòu" also does "Zhīhòu;Zhī hòu"
+        const RAW_REPLACEMENTS = `doū;dōu
+ zhe;zhe
+ guo;guo
+ le ;le 
+le ma; le ma
+le ba; le ba
+le ne; le ne
+le |; le |
+zhījiān;zhī jiān
+zhīhòu;zhī hòu
+zhīqián;zhī qián
+zàiyīqǐ;zài yīqǐ
+shénmeshíhou;shénme shíhou
+yějiùshì;yě jiùshì
+gǎnxìngqù;gǎnxìngqù
+yǒuméiyǒu;yǒu méiyǒu
+nàzhǒng;nà zhǒng
+zhèzhǒng;zhè zhǒng
+yīzhǒng;yī zhǒng
+Yīzhǒng;Yī zhǒng
+nàshíhou;nà shíhou
+Nàshíhou;Nà shíhou
+shìbùshì;shì bù shì
+cóngláiméiyǒu;cónglái méiyǒu
+bùshì;bù shì
+bǐrúshuō;bǐrú shuō
+bùyòng;bù yòng
+yǒuyīxiē;yǒu yīxiē
+huìbùhuì;huì bù huì
+ bùhuì; bù huì
+hǎobùhǎo;hǎo bù hǎo
+bùhǎo ;bù hǎo 
+ shang ; shàng 
+dìyīcì;dì-yī cì
+dì'èrcì;dì-èr cì
+dìyī;dì-yī
+dì'èr;dì-èr
+ láishuō; lái shuō
+ bùnéng; bù néng
+méiyǒubìyào;méiyǒu bìyào
+bùxíng ;bù xíng 
+bùxíng,;bù xíng,
+...;…
+bùhǎoyìsi;bù hǎoyìsi
+bùmíngbái;bù míngbái
+xīfāngguójiā;Xīfāng guójiā
+ xīfāng ; Xīfāng 
+zuòshēngyì;zuò shēngyì
+yǒubāngzhù;yǒu bāngzhù
+néngbùnéng;néng bù néng
+cóngér;cóng'ér
+hěnduō;hěn duō
+ bùtài ; bùtài 
+bùdǎbùchéngcái;bù dǎ bù chéngcái
+yīngguórén;Yīngguórén`;
+
+    </script>
+
+    <style>
+        :root {
+            --font-mono: monospace, monospace;
+            --color-text: #000000;
+            --color-bg-soft: #f5f5f5;
+            --color-bg-info: #ffffc3;
+            --color-border: #000000;
+            --color-border-info: #8f8f05;
+            --color-button-press: rgb(191, 191, 220);
+        }
+
+        *,
+        *::before,
+        *::after {
+            box-sizing: border-box;
+        }
+
+        html {
+            font-size: 1rem;
+            color-scheme: auto;
+        }
+
+        body {
+            font-family: var(--font-mono);
+            font-size: 1rem;
+            padding: 1rem;
+            margin: 0;
+            color: var(--color-text);
+        }
+
+        p.info {}
+
+        .infobox {
+            font-family: Arial, sans-serif;
+            border: 0.25rem solid var(--color-border-info);
+            border-radius: 0.5rem;
+            padding: 1rem;
+        }
+
+        .infobox h1 {
+            font-size: 1.25rem;
+        }
+
+        .infobox h2 {
+            font-size: 1.125rem;
+        }
+
+        .infobox h3 {
+            font-size: 1rem;
+        }
+
+        textarea {
+            font-family: var(--font-mono);
+            font-size: 1rem;
+            width: 100%;
+            max-width: 100%;
+            height: 6rem;
+            padding: 0 0.5rem;
+            border: 0.125rem solid var(--color-border);
+            border-radius: 0.5rem;
+        }
+
+        textarea:focus {
+            outline: none;
+            box-shadow: none;
+        }
+
+        h3 {
+            padding: 0.5rem 0 0 0;
+        }
+
+        button {
+            font-family: var(--font-mono);
+            font-size: 1rem;
+            padding: 0.5rem 2rem;
+            background-color: transparent;
+            border: 0.125rem solid var(--color-border);
+            border-radius: 0.5rem;
+            cursor: pointer;
+        }
+
+        button {
+            transition: background-color 0.25s ease;
+        }
+
+        button.flash {
+            background-color: var(--color-button-press);
+        }
+
+        pre {
+            font-family: var(--font-mono);
+            font-size: 1rem;
+            background: var(--color-bg-soft);
+            padding: 1rem;
+            border-radius: 0.5rem;
+            overflow-x: auto;
+        }
+    </style>
+</head>
+
+<body>
+
+    <h2>Pīnyīn Spelling Search-Replace</h2>
+
+    <h3>Replacement Rules</h3>
+    <textarea id="replacementsText"></textarea>
+
+    <h3>Input Text</h3>
+
+    <textarea id="inputText" placeholder="Paste your text written in Hànyǔ Pīnyīn here..."></textarea>
+    <button class="flashable" onclick="processText()">Go</button>
+
+    <h3>Output Text</h3>
+    <textarea id="outputText"></textarea>
+    <button class="flashable" onclick="copyOutput()">Copy to Clipboard</button>
+    <span id="changeCount"></span>
+
+    <h3>Changes Log</h3>
+    <pre id="log"></pre>
+
+    <h3>Info</h3>
+
+    <div class="infobox">
+
+        <h1>Pinyin-Spelling-Search-Replace</h1>
+        <p>A simple pre-processing tool for correcting common spelling errors in Hànyǔ Pīnyīn via plain-text
+            replacements.</p>
+
+        <h2>Overview</h2>
+        <p>This tool performs simple plain-text replacements without grammatical analysis. It may be used to correct
+            common spelling issues in podcast subtitle transcripts written in Hànyǔ Pīnyīn, such as those from Mandarin
+            Corner. It is intended as a convenient pre-processing step before reviewing the text sentence by sentence.
+        </p>
+        <p>The primary norm used is <em>National Standards of the People's Republic of China, GB/T 16159-2012</em>
+            (中华人民共和国国家标准); Yīn Bǐnyōng’s Chinese Romanization Pronunciation and Orthography is used as interpretive
+            fallback.</p>
+
+        <h2>Interface Overview</h2>
+        <ul>
+            <li><strong>Replacement Rules</strong><br>Editable list of search-and-replace rules used during processing.
+                Two columns separated by a semicolon, whitespace sensitive.</li>
+            <li><strong>Input Text</strong><br>Tone-marked Pīnyīn content to be processed.</li>
+            <li><strong>Output Text</strong><br>Processed result after applying all replacement rules. Processing is
+                done twice per rule, one as is, and one with initial capital letter.</li>
+            <li><strong>Changes Log</strong><br>Displays a line-by-line diff, <code>- original</code>,
+                <code>+ processed</code>.</li>
+        </ul>
+
+        <h2>Examples of replacements and problems</h2>
+
+        <h3>Basic correction</h3>
+        <pre>
+去过
+- qù guo
++ qùguo
+</pre>
+        <p>Processed the Replacement Rule "<code> guo;guo</code>", which follows the spelling rule 6.1.2.1 of GB/T
+            16159-2012, "Verbs and the aspect particles “着 (zhe)”, “过 (guo)” and in some cases “了 (le)” are written
+            together."</p>
+
+        <h3>Limitations: No validation and correction of incorrect romanisation/transcription</h3>
+        <p>Legend: <code>→ after manual correction</code></p>
+
+        <h4>Wrong spelling of diacritics</h4>
+        <pre>
+其实我做过挺多工作的。
+- Qíshí wǒ zuò guò tǐng duō gōngzuò de.
+→ Qíshí wǒ zuòguo tǐng duō gōngzuò de.
+</pre>
+        <p>Here, <em>guò</em> has been incorrectly tone-marked in the given input text, when it should have been
+            transcribed as neutral-tone <em>guo</em>. This requires manual correction.</p>
+
+        <h4>Wrong compound forming</h4>
+        <pre>
+那今天呢我们就请来了一位外汉语教学
+- Nà jīntiān ne wǒmen jiù qǐng lái le yī wèi Hànyǔ jiàoxué
++ Nà jīntiān ne wǒmen jiù qǐng láile yī wèi Hànyǔ jiàoxué
+→ Nà jīntiān ne wǒmen jiù qǐngláile yī wèi Hànyǔ jiàoxué
+</pre>
+        <p>Processed the Replacement Rule <code> le;le</code>. However, <em>qǐnglái</em> should be written as a compound
+            verb. This requires manual correction.</p>
+        <p>Note: when <code>le</code> is a sentence-final, it becomes <em>qǐnglái le</em> rather than
+            <em>qǐngláile</em>.</p>
+
+        <h4>Multi-error transcription</h4>
+        <pre>
+因为我觉得中国人就是很习惯性地会给别人泼冷水，对吧？| 对
+- Yīnwèi wǒ juédé zhōngguó rén jiùshì hěn xíguàn xìng dì huì gěi biérén pōlěngshuǐ, duì ba?
+→ Yīnwèi wǒ juédé Zhōngguórén jiùshì hěn xíguànxìng de huì gěi biérén pōlěngshuǐ, duì ba?
+</pre>
+        <p>In this example, Google Translate made four (4) transcription mistakes in a single sentence. These cannot be
+            resolved with simple replacement rules and require manual correction.</p>
+        <p>Errors include:</p>
+        <ul>
+            <li><strong>zhōngguó rén → Zhōngguórén</strong>
+                <ul>
+                    <li>a) The words need to be written together, because rule 5.2, "Disyllabic and trisyllabic
+                        structures expressing a single concept are written together."</li>
+                    <li>b) Zhōngguóren needs to be written with an initial capital letter, because of rule 6.3.3, "If
+                        the component of proper nouns is written together with the component of ordinary nouns, the
+                        first letter is capitalized."</li>
+                </ul>
+            </li>
+            <li><strong>xíguàn xìng → xíguànxìng</strong>
+                <ul>
+                    <li>xíguànxìng is a lexicalised adjective (here, adverbial modifier) and should be written as one
+                        word, as per rule 5.2</li>
+                </ul>
+            </li>
+            <li><strong>地 → de</strong>
+                <ul>
+                    <li> "地" should be transcribed as "de"</li>
+                </ul>
+            </li>
+        </ul>
+        <hr>
+        <p>Have fun with Hànyǔ Pīnyīn. 🚀 Text replacement tool © 2026 by Alfons Grabher, MIT license.</p>
+
+    </div>
+
+    <script>
+
+        function getCurrentReplacements() {
+            return buildReplacements(document.getElementById("replacementsText").value);
+        }
+
+        document.addEventListener("DOMContentLoaded", () => {
+            const ta = document.getElementById("replacementsText");
+            if (ta) ta.value = RAW_REPLACEMENTS;
+        });
+        // --- PARSE INTO PAIRS ---
+        function buildReplacements(raw) {
+            const list = [];
+
+            raw.split("\n").forEach(line => {
+                line = line;
+                if (!line) return;
+
+                const parts = line.split(";");
+                if (parts.length < 2) return;
+
+                const from = parts[0];
+                const to = parts[1];
+
+                if (!from || !to) return;
+
+                // base rule
+                list.push([from, to]);
+
+                // uppercase variant
+                if (from[0] === from[0].toLowerCase()) {
+                    const capFrom = capitalize(from);
+                    const capTo = capitalize(to);
+                    list.push([capFrom, capTo]);
+                }
+            });
+
+            return list;
+        }
+
+
+        function capitalize(str) {
+            return str.charAt(0).toUpperCase() + str.slice(1);
+        }
+
+
+        const REPLACEMENTS = buildReplacements(RAW_REPLACEMENTS);
+
+
+        // --- MAIN PROCESS ---
+        function processText() {
+            const input = document.getElementById("inputText").value;
+            const lines = input.split("\n");
+
+            const REPLACEMENTS = getCurrentReplacements();
+            const log = [];
+            const output = [];
+
+            let totalChanges = 0;
+
+            lines.forEach(line => {
+                let updated = line;
+
+                REPLACEMENTS.forEach(([from, to]) => {
+                    const occurrences = updated.split(from).length - 1;
+                    if (occurrences > 0) {
+                        totalChanges += occurrences;
+                        updated = updated.split(from).join(to);
+                    }
+                });
+
+                if (line !== updated) {
+                    log.push(`- ${line}\n+ ${updated}`);
+                }
+
+                output.push(updated);
+            });
+
+            document.getElementById("changeCount").textContent =
+                `${totalChanges} replacement${totalChanges !== 1 ? "s" : ""} performed`;
+            document.getElementById("outputText").value = output.join("\n");
+            document.getElementById("log").textContent = log.join("\n\n");
+        }
+        function copyOutput() {
+            const text = document.getElementById("outputText").value;
+
+            navigator.clipboard.writeText(text).then(() => {
+            })
+        }
+
+        function flashButton(btn) {
+            btn.classList.remove("flash"); // reset if already active
+            void btn.offsetWidth;          // force reflow to restart animation
+            btn.classList.add("flash");
+
+            setTimeout(() => {
+                btn.classList.remove("flash");
+            }, 300);
+        }
+
+        document.addEventListener("DOMContentLoaded", () => {
+            document.querySelectorAll(".flashable").forEach(btn => {
+                btn.addEventListener("click", () => flashButton(btn));
+            });
+        });
+    </script>
+
+</body>
+
+</html>

@@ -15,8 +15,12 @@ The primary norm used is *National Standards of the People's Republic of China, 
 - **Output Text**  
   Processed result after applying all replacement rules. Processing is done twice per rule, one as is, and one with initial capital letter.
 
-- **Final Changes Log**  
-  Displays a line-by-line diff `- original`, `+ processed`.
+- **Final Changes Log**
+  
+  Displays a line-by-line diff. Legend:
+  - `-` Input Text
+  - `+` Output Text
+  - `→` How the manually corrected sentence would look like
 
 # Examples of replacements and problems
 
@@ -30,11 +34,27 @@ The primary norm used is *National Standards of the People's Republic of China, 
 
 Processed the Replacement Rule "` guo;guo`", which follows the spelling rule 6.1.2.1 of GB/T 16159-2012, "Verbs and the aspect particles “着 (zhe)”, “过 (guo)” and in some cases “了 (le)” are written together."
 
-## Limitations: No validation and correction of incorrect romanisation/transcription
+## Problem: Overcorrection
 
-Legend: `→ after manual correction`
+```
+这个不是理发店，就是全是文职工作的。
+- Zhège bùshì lǐfàdiàn, jiùshì quán shì wénzhí gōngzuò de.
++ Zhège bù shì lǐfàdiàn, jiùshì quán shì wénzhí gōngzuò de.
+```
+Here the correction of `bùshì` into `bù shì` is correct.
 
-### Wrong spelling of diacritics
+```
+首先轻度地会感觉到不适
+- shǒuxiān qīngdù de huì gǎnjué dào bùshì
++ shǒuxiān qīngdù de huì gǎnjué dào bù shì
+```
+Here the correction of `bùshì` into `bù shì` is incorrect.
+
+# Limitations
+
+## No handling of incorrect Input Text romanisation/transcription
+
+### Wrong spelling of Pīnyīn
 
 ```
 其实我做过挺多工作的。
@@ -42,7 +62,7 @@ Legend: `→ after manual correction`
 → Qíshí wǒ zuòguo tǐng duō gōngzuò de.
 ```
 
-Here, *guò* has been incorrectly tone-marked in the given input text, when it should have been transcribed as neutral-tone *guo*. This requires manual correction.
+Here, *guò* has been incorrectly tone-marked, when it should have been transcribed as neutral-tone *guo*. This requires manual correction.
 
 ### Wrong compound forming
 
@@ -55,7 +75,7 @@ Here, *guò* has been incorrectly tone-marked in the given input text, when it s
 
 Processed the Replacement Rule *` le;le`*. However, *qǐnglái* should be written as a compound verb. This requires manual correction.
 
-Note: when `le` is a sentence-final, it becomes *qǐnglái le* rather than *qǐngláile*.
+Note: when `le` is a sentence-final, it becomes "*qǐnglái le*" rather than "*qǐngláile*".
 
 ## Multi-error transcription
 

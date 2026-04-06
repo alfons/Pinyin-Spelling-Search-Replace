@@ -1,6 +1,6 @@
 # Pinyin-Spelling-Search-Replace
 
-This tool performs simple plain-text replacements without grammatical analysis. It may be used to correct common spelling issues in podcast subtitle transcripts written in Hànyǔ Pīnyīn, such as those from Mandarin Corner. It is intended as a convenient pre-processing step before reviewing the text sentence by sentence.
+This tool performs simple plain-text replacements without grammatical analysis. It's intended for whole-sale, indiscriminate fixing of very common spelling mistakes (such as those from podcast transcripts) before manual correction. 
 
 The primary norm used is *National Standards of the People's Republic of China, GB/T 16159-2012* (中华人民共和国国家标准); Yīn Bǐnyōng’s Chinese Romanization Pronunciation and Orthography is used as interpretive fallback.
 

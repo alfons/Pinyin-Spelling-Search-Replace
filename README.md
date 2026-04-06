@@ -1,7 +1,4 @@
 # Pinyin-Spelling-Search-Replace
-A simple pre-processing tool for correcting common spelling errors in Hànyǔ Pīnyīn via plain-text replacements.
-
-# Overview
 
 This tool performs simple plain-text replacements without grammatical analysis. It may be used to correct common spelling issues in podcast subtitle transcripts written in Hànyǔ Pīnyīn, such as those from Mandarin Corner. It is intended as a convenient pre-processing step before reviewing the text sentence by sentence.
 

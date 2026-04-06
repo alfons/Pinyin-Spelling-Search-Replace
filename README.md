@@ -1,4 +1,4 @@
-# Pinyin-Spelling-Search-Replace
+# Pīnyīn Spelling Search-Replace
 
 This tool performs simple plain-text replacements without grammatical analysis. It's intended for whole-sale, indiscriminate fixing of very common spelling mistakes (such as those from podcast transcripts) before manual correction. 
 

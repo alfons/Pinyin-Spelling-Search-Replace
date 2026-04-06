@@ -190,7 +190,7 @@ yīngguórén;Yīngguórén`;
 
     <div class="infobox">
 
-        <h1>Pinyin-Spelling-Search-Replace</h1>
+        <h1>Pīnyīn Spelling Search-Replace</h1>
         <p>A simple pre-processing tool for correcting common spelling errors in Hànyǔ Pīnyīn via plain-text
             replacements.</p>
 
@@ -203,84 +203,8 @@ yīngguórén;Yīngguórén`;
             (中华人民共和国国家标准); Yīn Bǐnyōng’s Chinese Romanization Pronunciation and Orthography is used as interpretive
             fallback.</p>
 
-        <h2>Interface Overview</h2>
-        <ul>
-            <li><strong>Replacement Rules</strong><br>Editable list of search-and-replace rules used during processing.
-                Two columns separated by a semicolon, whitespace sensitive.</li>
-            <li><strong>Input Text</strong><br>Tone-marked Pīnyīn content to be processed.</li>
-            <li><strong>Output Text</strong><br>Processed result after applying all replacement rules. Processing is
-                done twice per rule, one as is, and one with initial capital letter.</li>
-            <li><strong>Changes Log</strong><br>Displays a line-by-line diff, <code>- original</code>,
-                <code>+ processed</code>.</li>
-        </ul>
-
-        <h2>Examples of replacements and problems</h2>
-
-        <h3>Basic correction</h3>
-        <pre>
-去过
-- qù guo
-+ qùguo
-</pre>
-        <p>Processed the Replacement Rule "<code> guo;guo</code>", which follows the spelling rule 6.1.2.1 of GB/T
-            16159-2012, "Verbs and the aspect particles “着 (zhe)”, “过 (guo)” and in some cases “了 (le)” are written
-            together."</p>
-
-        <h3>Limitations: No validation and correction of incorrect romanisation/transcription</h3>
-        <p>Legend: <code>→ after manual correction</code></p>
-
-        <h4>Wrong spelling of diacritics</h4>
-        <pre>
-其实我做过挺多工作的。
-- Qíshí wǒ zuò guò tǐng duō gōngzuò de.
-→ Qíshí wǒ zuòguo tǐng duō gōngzuò de.
-</pre>
-        <p>Here, <em>guò</em> has been incorrectly tone-marked in the given input text, when it should have been
-            transcribed as neutral-tone <em>guo</em>. This requires manual correction.</p>
-
-        <h4>Wrong compound forming</h4>
-        <pre>
-那今天呢我们就请来了一位外汉语教学
-- Nà jīntiān ne wǒmen jiù qǐng lái le yī wèi Hànyǔ jiàoxué
-+ Nà jīntiān ne wǒmen jiù qǐng láile yī wèi Hànyǔ jiàoxué
-→ Nà jīntiān ne wǒmen jiù qǐngláile yī wèi Hànyǔ jiàoxué
-</pre>
-        <p>Processed the Replacement Rule <code> le;le</code>. However, <em>qǐnglái</em> should be written as a compound
-            verb. This requires manual correction.</p>
-        <p>Note: when <code>le</code> is a sentence-final, it becomes <em>qǐnglái le</em> rather than
-            <em>qǐngláile</em>.</p>
-
-        <h4>Multi-error transcription</h4>
-        <pre>
-因为我觉得中国人就是很习惯性地会给别人泼冷水，对吧？| 对
-- Yīnwèi wǒ juédé zhōngguó rén jiùshì hěn xíguàn xìng dì huì gěi biérén pōlěngshuǐ, duì ba?
-→ Yīnwèi wǒ juédé Zhōngguórén jiùshì hěn xíguànxìng de huì gěi biérén pōlěngshuǐ, duì ba?
-</pre>
-        <p>In this example, Google Translate made four (4) transcription mistakes in a single sentence. These cannot be
-            resolved with simple replacement rules and require manual correction.</p>
-        <p>Errors include:</p>
-        <ul>
-            <li><strong>zhōngguó rén → Zhōngguórén</strong>
-                <ul>
-                    <li>a) The words need to be written together, because rule 5.2, "Disyllabic and trisyllabic
-                        structures expressing a single concept are written together."</li>
-                    <li>b) Zhōngguóren needs to be written with an initial capital letter, because of rule 6.3.3, "If
-                        the component of proper nouns is written together with the component of ordinary nouns, the
-                        first letter is capitalized."</li>
-                </ul>
-            </li>
-            <li><strong>xíguàn xìng → xíguànxìng</strong>
-                <ul>
-                    <li>xíguànxìng is a lexicalised adjective (here, adverbial modifier) and should be written as one
-                        word, as per rule 5.2</li>
-                </ul>
-            </li>
-            <li><strong>地 → de</strong>
-                <ul>
-                    <li> "地" should be transcribed as "de"</li>
-                </ul>
-            </li>
-        </ul>
+        <h2>Readme</h2>
+        <p>The Readme lives at: https://github.com/alfons/Pinyin-Spelling-Search-Replace/blob/main/README.md</p>
         <hr>
         <p>Have fun with Hànyǔ Pīnyīn. 🚀 Text replacement tool © 2026 by Alfons Grabher, MIT license.</p>
 
